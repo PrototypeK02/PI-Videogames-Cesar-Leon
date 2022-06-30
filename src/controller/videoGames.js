@@ -2,8 +2,24 @@ const axios = require("axios")
 require('dotenv').config();
 const {YOUR_API_KEY} = process.env
 const formatObjectHome = require("../utils/formatObject")
+const { Videogame, Genre } = require("../db")
+const { getAllNames} = require("./videoGameName")
+
+
 
 async function getAllGames(req,res,next) {
+
+    const {name} = req.query
+    if(name && name !== "") {
+        try {
+        let allNames = await getAllNames(name)
+        res.send(allNames)
+        }catch(error) {
+            res.status(404).send(error.message)
+        }
+    }
+
+else{
 let pages = 1
 let final = []
     for(let i =0; i<5; i++) {
@@ -18,11 +34,25 @@ let final = []
         pages++
 
     } catch (error) {
-        next(error)
+        next(error.message)
     }
 }
-console.log(final.length)
+
+let videogamesDB = await Videogame.findAll({
+    include: {
+        model: Genre,
+}})
+console.log(videogamesDB)
+if(videogamesDB.length > 0) {
+    videogamesDB.reverse()
+
+    final = videogamesDB.concat(final)
+}
+
+
+
 res.json(final)
+}
 }
 
 module.exports= {
