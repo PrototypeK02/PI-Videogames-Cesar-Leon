@@ -86,7 +86,7 @@ async function addVideoGame(req,res,next) {
                 }
             }
 
-                res.status(201).send("VideoGame created Succefully!")
+               return res.status(201).send("VideoGame created Succefully!")
             
 
            
@@ -97,11 +97,11 @@ async function addVideoGame(req,res,next) {
 
         }
         else{
-           res.status(400).send("VideoGame already exists")
+         return  res.status(400).send("VideoGame already exists")
         }
     
         } catch (error) {
-            res.status(400).send(error.message)
+           return res.status(400).send(error.message)
         }
     }
  

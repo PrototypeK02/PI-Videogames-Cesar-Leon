@@ -20,7 +20,7 @@ async function getGameId(req,res,next) {
       },
 }
 )
-
+console.log(videoGameDB)
 
 
 let finalgame1 = {

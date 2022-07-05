@@ -60,10 +60,13 @@ async function getAllNames(name) {
             top15 = top15.slice(0,15).concat(nameDB)
            
            console.log(nameDB)
+           if(top15.length < 1) {
+            throw new Error("VideoGame Not Found")
+           }
            return top15
     
         } catch (error) {
-            throw new Error("VideoGame not found")
+            throw new Error("VideoGame Not Found")
         }
     }
  
