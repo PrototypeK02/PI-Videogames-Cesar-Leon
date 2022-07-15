@@ -20,16 +20,20 @@ async function addVideoGame(req,res,next) {
     
     try {
         
-        if(!name || name === ""||!platform || platform.length < 1 || !genre) {
+        if(!name || name === ""||!platform || platform.length < 1 || !genre  || genre.length < 1) {
             throw new Error("Not enough elements for this game")
         }
 
         if(!description || description.length < 30) {
             throw new Error("Description is too short")
         }
-        
-        let nametoCreate = name.replace(/[^A-Z0-9" "]+/ig, "").trim()  
 
+        if(typeof(Number(rating)) !== "number" || rating < 1) {
+            throw new Error("Rating must be a valid number")
+        }
+        
+        let nametoCreate = name.replace(/[^A-ZñÑ0-9]+/ig, " ").trim()  
+        //console.log(nametoCreate)
         let searchGameNameDB = await Videogame.findAll({
             where: {
                 name:  nametoCreate
@@ -41,7 +45,7 @@ async function addVideoGame(req,res,next) {
         if(!searchGameNameDB.length || searchGameNameDB.length < 1) {
 
             
-                let nameToApiSearch = name.replace(/[^A-Z0-9]+/ig, "-");    
+                let nameToApiSearch = name.replace(/[^A-Z0-9]+/ig, "");    
                 
         
 
@@ -68,20 +72,22 @@ async function addVideoGame(req,res,next) {
                 
 
             })
-            console.log(top15)
+            //console.log(top15)
             if(top15.length > 0 ) {
                 throw new Error("VideoGame already exists")
             }
 
             else{
-               await Videogame.create({name, description, releaseDate: !releaseDate ? "1958/10/04": releaseDate, image: !image ? "https://s3.envato.com/files/10065422/Extra%20Previews/06_Preview6.png": image, rating: !rating ? "0"  : rating, platform})
+                nametoCreate = nametoCreate[0].toUpperCase() + nametoCreate.slice(1)
+               await Videogame.create({name: nametoCreate, description, releaseDate: !releaseDate ? "1958/10/04": releaseDate, image: !image ? "https://s3.envato.com/files/10065422/Extra%20Previews/06_Preview6.png": image, rating: !rating ? "0"  : rating, platform})
                 let coco2 = await Videogame.findOne({
                     where: {
-                        name
+                        name: nametoCreate
                     }
                 })
                 if(genre) {
                    let genresetter= genre.map(el => {return el.id})
+                  // console.log(nametoCreate)
                     await coco2.setGenres(genresetter)
                 }
             }
@@ -97,7 +103,7 @@ async function addVideoGame(req,res,next) {
 
         }
         else{
-         return  res.status(400).send("VideoGame already exists")
+         return  res.status(400).send(error.message)
         }
     
         } catch (error) {

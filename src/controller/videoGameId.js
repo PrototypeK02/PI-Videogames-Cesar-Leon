@@ -19,10 +19,17 @@ async function getGameId(req,res,next) {
       
       },
 }
+
 )
+if(!videoGameDB) {
+  return res.status(400).send("This id Does not Exists")
+}
+
+  
+
 console.log(videoGameDB)
 
-
+if(videoGameDB || videoGameDB.length > 0) {
 let finalgame1 = {
   id: videoGameDB.id,
   name: videoGameDB.name,
@@ -37,7 +44,7 @@ let finalgame1 = {
 console.log(videoGameDB.platform)
 res.send(videoGameDB)
 
-
+}
 }
 else {
 
@@ -51,6 +58,7 @@ else {
             let finalgame = {
                 id: game.id,
                 name: game.name,
+                slug: game.slug,
                 image: game.background_image,
                 description: game.description_raw,
                 rating: game.rating,
